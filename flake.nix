@@ -15,6 +15,7 @@
         # 2. Add foo as a parameter to the outputs function
         # 3. Add here: foo.flakeModule
         ./lib/devtools
+        inputs.flake-parts.flakeModules.easyOverlay
       ];
       systems = [ "x86_64-linux" "aarch64-linux" "aarch64-darwin" "x86_64-darwin" ];
 
@@ -34,18 +35,28 @@
         };
 
         toolkit = self.lib.basicTools pkgs;
-      in {
-        # Per-system attributes can be defined here. The self' and inputs'
-        # module parameters provide easy access to attributes of the same
-        # system.
 
+        callPackage = pkgs.newScope (pkgs // packages);
+        callPy3Package = pkgs.newScope (pkgs // pkgs.python3Packages // packages);
+
+        packages = {
+          inherit callPackage
+            ociImgBase
+            ociImgIqlQuery
+          ;
+          
+          goftests = callPackage ./pkgs/goftests { };
+          parsable = callPackage ./pkgs/parsable { };
+          pymetis = callPackage ./pkgs/pymetis { };
+          distributions = callPackage ./pkgs/distributions { };
+          loom = callPy3Package ./pkgs/loom { };
+        };
+      in {
         devShells.default = pkgs.mkShell {
           buildInputs = [] ++ toolkit;
         };
-
-        packages = {
-          inherit ociImgBase ociImgIqlQuery;
-        };
+        
+        inherit packages;
       };
 
       # NOTE: this property is consumed by flake-parts.mkFlake to define fields
