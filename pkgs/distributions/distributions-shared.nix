@@ -1,8 +1,9 @@
-{
+{ lib,
   stdenv,
   cmake,
   eigen,
   protobuf3_20,
+  python3,
   src, version
 }:
 stdenv.mkDerivation {
@@ -10,10 +11,16 @@ stdenv.mkDerivation {
 
   inherit version src;
 
-  nativeBuildInputs = [ cmake ];
-  buildInputs = [eigen protobuf3_20 ];
+  nativeBuildInputs = [ cmake python3 python3.pkgs.pyflakes ];
+  buildInputs = [ eigen protobuf3_20 ];
 
   DISTRIBUTIONS_USE_PROTOBUF = 1;
+
+  patches = [
+    ./x86-intrinsics-only-on-intel.patch
+  ] ++ (lib.lists.optionals stdenv.isAarch64 [
+    ./remove-sse-flags.patch
+  ]);
 
   preConfigure = ''
     make protobuf
