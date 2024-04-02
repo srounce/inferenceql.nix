@@ -1,4 +1,5 @@
 { lib
+, callPackage
 , buildPythonPackage
 , fetchFromGitHub
 , setuptools
@@ -176,6 +177,8 @@ buildPythonPackage {
   '';
 
   passthru.loom-cpp = loom-cpp;
+
+  passthru.tests.run = callPackage ./test.nix { inherit src; };
 
   meta = with lib; {
     description = "A streaming cross-cat inference engine";

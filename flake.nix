@@ -36,11 +36,20 @@
 
         toolkit = self.lib.basicTools pkgs;
 
-        callPackage = pkgs.newScope (pkgs // packages);
-        callPy3Package = pkgs.newScope (pkgs // pkgs.python3Packages // packages);
+        callPackage = pkgs.newScope (
+          pkgs
+          // { inherit callPackage; }
+          // packages
+        );
+        callPy3Package = pkgs.newScope (
+          pkgs
+          // pkgs.python3Packages
+          // { inherit callPackage; }
+          // packages
+        );
 
         packages = {
-          inherit callPackage
+          inherit
             ociImgBase
             ociImgIqlQuery
           ;

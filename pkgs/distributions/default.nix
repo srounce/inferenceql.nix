@@ -14,8 +14,8 @@ let
   src = fetchFromGitHub {
     owner = "posterior";
     repo = "distributions";
-    rev = "c2a9dccb09ab525927037ed59f3ceffb38e8a995"; # there is no tag
-    sha256 = "sha256-KP8o5w0PKdcwgmQJqRBRmEPrHesHvPQCp+g22mk5wOs=";
+    rev = "43c11618b0f229682fb916612ba2437c5f22a753"; # there is no tag
+    sha256 = "sha256-DiJ6Ljwc5K1CrzzexAQ53g86sKqaroYRhmXuxAHAOq4=";
   };
 
   distributions-shared = callPackage ./distributions-shared.nix { inherit version src; };
@@ -64,6 +64,7 @@ python3Packages.buildPythonPackage {
 
   propagatedBuildInputs = with python3Packages; [
     protobuf3_20
+    protobuf
     cython
     numpy
     parsable
@@ -77,6 +78,7 @@ python3Packages.buildPythonPackage {
     imageio
     nose
     goftests
+    pytest
   ];
 
   preBuild = ''
@@ -84,7 +86,7 @@ python3Packages.buildPythonPackage {
   '';
 
   patches = [
-    #./distributions-01-imread.patch
+    ./use-imread-instead-of-scipy.patch
   ];
 
   DISTRIBUTIONS_USE_PROTOBUF = 1;
