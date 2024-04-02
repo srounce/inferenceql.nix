@@ -180,6 +180,20 @@ buildPythonPackage {
 
   passthru.tests.run = callPackage ./test.nix { inherit src; };
 
+  passthru.test-shell = callPackage ({
+    mkShell
+  , python3
+  , loom
+  , which
+  }: mkShell {
+    packages = [
+      python3
+      loom
+      loom.loom-cpp
+      which
+    ];
+  }) {};
+
   meta = with lib; {
     description = "A streaming cross-cat inference engine";
     homepage = "https://github.com/emilyfertig/loom";
