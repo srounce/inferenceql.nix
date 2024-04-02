@@ -30,7 +30,6 @@
 , eigen
 , distributions
 , gperftools
-, breakpointHook
 }:
 let
   protobuf = protobuf3_20;
@@ -112,7 +111,6 @@ buildPythonPackage {
     zlib
     eigen
     gperftools
-    breakpointHook
   ];
 
   nativeCheckInputs = [
