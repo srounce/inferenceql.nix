@@ -124,6 +124,7 @@ buildPythonPackage {
   DISTRIBUTIONS_USE_PROTOBUF = 1;
 
   propagatedBuildInputs = [
+    loom-cpp
     contextlib2
     cpplint
     cython
@@ -189,7 +190,6 @@ buildPythonPackage {
     packages = [
       python3
       loom
-      loom.loom-cpp
       which
     ];
   }) {};

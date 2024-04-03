@@ -8,7 +8,6 @@ runCommand "loom-test" {
   nativeBuildInputs = [
     python3
     loom
-    loom.loom-cpp
     which
   ];
 } ''
