@@ -6,6 +6,9 @@
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
   };
 
+  nixConfig.extra-substituters = [ "https://numtide.cachix.org" ];
+  nixConfig.extra-trusted-public-keys = [ "numtide.cachix.org-1:2ps1kLBUWjxIneOy1Ik6cQjb41X0iXVXeHigGmycPPE=" ];
+
   outputs = inputs@{ self, nixpkgs, flake-parts, ... }:
     flake-parts.lib.mkFlake { inherit inputs; } {
       imports = [
@@ -33,6 +36,7 @@
 
         scopes = (self.lib.mkScopes {
           inherit pkgs;
+          self = self';
           basicTools = self.lib.basicTools;
         });
         loom = scopes.callPy3Package ./pkgs/loom { };
@@ -44,8 +48,19 @@
 
             ociImgBase
           ;
+
+          bayes3d = scopes.callPy3Package ./pkgs/bayes3d { };
+          open3d = scopes.callPy3Package ./pkgs/open3d { };
         };
       in {
+        _module.args.pkgs = import inputs.nixpkgs {
+          inherit system;
+          config = {
+            allowUnfree = true;
+            cudaSupport = true;
+          };
+        };
+
         inherit packages;
       };
 
