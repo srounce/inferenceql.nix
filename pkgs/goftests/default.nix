@@ -17,7 +17,7 @@ python3Packages.buildPythonPackage rec {
   doCheck = false;
 
   # https://github.com/numba/numba/issues/8698#issuecomment-1584888063 
-  NUMPY_EXPERIMENTAL_DTYPE_API = 1;
+  env.NUMPY_EXPERIMENTAL_DTYPE_API = 1;
 
   patchPhase = ''
     mkdir -p dist
