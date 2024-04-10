@@ -13,7 +13,7 @@ stdenv.mkDerivation {
   nativeBuildInputs = [ cmake ];
   buildInputs = [eigen protobuf3_20 ];
 
-  DISTRIBUTIONS_USE_PROTOBUF = 1;
+  env.DISTRIBUTIONS_USE_PROTOBUF = 1;
 
   preConfigure = ''
     make protobuf
