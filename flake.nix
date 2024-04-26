@@ -35,29 +35,40 @@
         };
 
         scopes = (self.lib.mkScopes {
-          inherit pkgs;
-          self = self';
+          inherit pkgs internalPackages;
           basicTools = self.lib.basicTools;
         });
         loom = scopes.callPy3Package ./pkgs/loom { };
 
-        packages = loom.more_packages // {
+        bayes3d = scopes.callPackage ./pkgs/bayes3d { };
+        open3d = scopes.callPackage ./pkgs/open3d { };
+
+        internalPackages = {
+          tinygltf = scopes.callPackage ./pkgs/tinygltf { };
+          PoissonRecon = scopes.callPackage ./pkgs/PoissonRecon { };
+          goftests = scopes.callPackage ./pkgs/goftests { };
+          parsable = scopes.callPackage ./pkgs/parsable { };
+          pymetis = scopes.callPackage ./pkgs/pymetis { };
+          distributions = scopes.callPackage ./pkgs/distributions { };
+        } // packages;
+
+        packages = {
           inherit
             loom
             sppl
 
             ociImgBase
-          ;
 
-          bayes3d = scopes.callPy3Package ./pkgs/bayes3d { };
-          open3d = scopes.callPy3Package ./pkgs/open3d { };
+            bayes3d
+            open3d
+            ;
         };
       in {
         _module.args.pkgs = import inputs.nixpkgs {
           inherit system;
           config = {
             allowUnfree = true;
-            cudaSupport = true;
+            #cudaSupport = true;
           };
         };
 

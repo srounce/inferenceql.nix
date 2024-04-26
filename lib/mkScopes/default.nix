@@ -1,22 +1,22 @@
-{ pkgs, basicTools, self }:
+{ pkgs, basicTools, internalPackages }:
 let
   callPackage = pkgs.newScope (
     pkgs
     // {
-      inherit callPackage;
+      inherit callPackage callPy3Package;
       basicTools = basicTools pkgs;
     }
-    // self.packages
+    // internalPackages
   );
 
   callPy3Package = pkgs.newScope (
     pkgs
     // pkgs.python3Packages
     // {
-      inherit callPackage;
+      inherit callPackage callPy3Package;
       basicTools = basicTools pkgs;
     }
-    // self.packages
+    // internalPackages
   );
 in
 {

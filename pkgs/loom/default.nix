@@ -29,12 +29,12 @@
 , gperftools
 , dockerTools
 , basicTools
+, distributions
+, goftests
+, parsable
+, pymetis
 }:
 let
-  goftests = callPackage ./../goftests { };
-  parsable = callPackage ./../parsable { };
-  pymetis = callPackage ./../pymetis { };
-  distributions = callPackage ./../distributions {inherit goftests parsable;};
 
   protobuf = protobuf3_20;
 
