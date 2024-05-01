@@ -65,7 +65,7 @@ python3Packages.buildPythonPackage {
   propagatedBuildInputs = with python3Packages; [
     protobuf3_20
     protobuf
-    cython
+    cython_0
     numpy
     parsable
     scipy
