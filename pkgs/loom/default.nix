@@ -5,7 +5,7 @@
 , setuptools
 , wheel
 , cpplint
-, cython
+, cython_0
 , goftests
 , imageio
 , matplotlib
@@ -127,7 +127,7 @@ buildPythonPackage {
     loom-cpp
     contextlib2
     cpplint
-    cython
+    cython_0
     distributions
     distributions.distributions-shared
     goftests
