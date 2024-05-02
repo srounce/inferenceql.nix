@@ -24,6 +24,11 @@ jobs:
           -L \
           -o ./imgGensqlQuery \
           '.#ociImgGensqlQuery'
+    - run: |
+        nix build \
+          -L \
+          -o ./loom \
+          '.#loom'
 
     - name: Login to Docker Hub
       # only run this  when running on main, because
