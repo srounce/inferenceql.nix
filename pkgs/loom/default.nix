@@ -27,6 +27,8 @@
 , zlib
 , eigen
 , gperftools
+, dockerTools
+, basicTools
 }:
 let
   goftests = callPackage ./../goftests { };
@@ -83,131 +85,141 @@ let
     # https://github.com/jazzband/contextlib2/pull/52
     # updated to support Python3
     src = fetchFromGitHub {
-      owner = "mr-c";
+      owner = "jazzband";
       repo = "contextlib2";
       rev = "b8b7eb8ecd9e012178b5dcec4313edded751a459";
       hash = "sha256-FSx/vKctoFl4NlwzNDa9eDNUXeW1J875/nB6of+5gQk=";
     };
   });
-in
-buildPythonPackage {
-  inherit version;
 
-  src = loom-cpp.dev;
+  loom = buildPythonPackage {
+    inherit version;
 
-  pname = "loom";
+    src = loom-cpp.dev;
 
-  nativeBuildInputs = [
-    cmake
-    setuptools
-    wheel
-    protobuf
-  ];
+    pname = "loom";
 
-  buildInputs = [
-    cmake
-    gnumake
+    nativeBuildInputs = [
+      cmake
+      setuptools
+      wheel
+      protobuf
+    ];
 
-    distributions.distributions-shared
-    distributions
-    zlib
-    eigen
-    gperftools
-  ];
+    buildInputs = [
+      cmake
+      gnumake
 
-  nativeCheckInputs = [
-    pyflakes
-  ];
+      distributions.distributions-shared
+      distributions
+      zlib
+      eigen
+      gperftools
+    ];
 
-  # https://github.com/numba/numba/issues/8698#issuecomment-1584888063
-  env.NUMPY_EXPERIMENTAL_DTYPE_API = 1;
+    nativeCheckInputs = [
+      pyflakes
+    ];
 
-  env.DISTRIBUTIONS_USE_PROTOBUF = 1;
+    # https://github.com/numba/numba/issues/8698#issuecomment-1584888063
+    env.NUMPY_EXPERIMENTAL_DTYPE_API = 1;
 
-  propagatedBuildInputs = [
-    loom-cpp
-    contextlib2
-    cpplint
-    cython_0
-    distributions
-    distributions.distributions-shared
-    goftests
-    imageio
-    matplotlib
-    mock
-    nose
-    numpy
-    pandas
-    parsable
-    pep8
-    python3Packages.protobuf
-    pyflakes
-    pymetis
-    scikit-learn
-    scipy
-    setuptools
-    simplejson
-    pytest
-  ];
+    env.DISTRIBUTIONS_USE_PROTOBUF = 1;
 
-  # TODO: make tests run in checkPhase
-  doCheck = false;
+    propagatedBuildInputs = [
+      loom-cpp
+      contextlib2
+      cpplint
+      cython_0
+      distributions
+      distributions.distributions-shared
+      goftests
+      imageio
+      matplotlib
+      mock
+      nose
+      numpy
+      pandas
+      parsable
+      pep8
+      python3Packages.protobuf
+      pyflakes
+      pymetis
+      scikit-learn
+      scipy
+      setuptools
+      simplejson
+      pytest
+    ];
 
-  pythonImportsCheck = [
-    "loom"
-    "loom.cleanse"
-    "loom.crossvalidate"
-    "loom.datasets"
-    "loom.format"
-    "loom.generate"
-    "loom.preql"
-    "loom.query"
-    "loom.schema_pb2"
-    "loom.store"
-    "loom.tasks"
-    "loom.transforms"
-    "loom.util"
-    "loom.watch"
-  ];
+    # TODO: make tests run in checkPhase
+    doCheck = false;
 
-  dontUseCmakeConfigure = true;
+    pythonImportsCheck = [
+      "loom"
+      "loom.cleanse"
+      "loom.crossvalidate"
+      "loom.datasets"
+      "loom.format"
+      "loom.generate"
+      "loom.preql"
+      "loom.query"
+      "loom.schema_pb2"
+      "loom.store"
+      "loom.tasks"
+      "loom.transforms"
+      "loom.util"
+      "loom.watch"
+    ];
 
-  enableParallelBuilding = true;
+    dontUseCmakeConfigure = true;
 
-  prePatch = ''
-    sed -i 's/-Werror//g' CMakeLists.txt # remove -Werror
-  '';
+    enableParallelBuilding = true;
 
-  passthru.loom-cpp = loom-cpp;
+    prePatch = ''
+      sed -i 's/-Werror//g' CMakeLists.txt # remove -Werror
+    '';
 
-  passthru.more_packages = {
-    inherit
+    passthru.loom-cpp = loom-cpp;
+
+    passthru.more_packages = {
+      inherit
       goftests
       distributions
       pymetis
       parsable
-    ;
+      ;
+    };
+
+    passthru.ociImg = dockerTools.buildLayeredImage {
+      name = "probcomp/loom";
+      contents =
+        with pkgs; [ loom bashInteractive ] ++
+        basicTools
+      ;
+    };
+
+    passthru.tests.run = callPackage ./test.nix { inherit src; };
+
+    passthru.test-shell = callPackage ({
+      mkShell
+      , python3
+      , loom
+      , which
+    }: mkShell {
+      packages = [
+        python3
+        loom
+        which
+      ];
+    }) {};
+
+    meta = with lib; {
+      description = "A streaming cross-cat inference engine";
+      homepage = "https://github.com/emilyfertig/loom";
+      license = licenses.bsd3;
+      maintainers = with maintainers; [ ];
+    };
   };
-
-  passthru.tests.run = callPackage ./test.nix { inherit src; };
-
-  passthru.test-shell = callPackage ({
-    mkShell
-  , python3
-  , loom
-  , which
-  }: mkShell {
-    packages = [
-      python3
-      loom
-      which
-    ];
-  }) {};
-
-  meta = with lib; {
-    description = "A streaming cross-cat inference engine";
-    homepage = "https://github.com/emilyfertig/loom";
-    license = licenses.bsd3;
-    maintainers = with maintainers; [ ];
-  };
-}
+in
+loom

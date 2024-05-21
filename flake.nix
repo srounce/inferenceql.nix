@@ -31,7 +31,10 @@
           basicTools = self.lib.basicTools;
         };
 
-        scopes = (self.lib.mkScopes pkgs);
+        scopes = (self.lib.mkScopes {
+          inherit pkgs;
+          basicTools = self.lib.basicTools;
+        });
         loom = scopes.callPy3Package ./pkgs/loom { };
 
         packages = loom.more_packages // {
