@@ -83,7 +83,7 @@ let
     # https://github.com/jazzband/contextlib2/pull/52
     # updated to support Python3
     src = fetchFromGitHub {
-      owner = "mr-c";
+      owner = "jazzband";
       repo = "contextlib2";
       rev = "b8b7eb8ecd9e012178b5dcec4313edded751a459";
       hash = "sha256-FSx/vKctoFl4NlwzNDa9eDNUXeW1J875/nB6of+5gQk=";
