@@ -70,3 +70,9 @@ Native library for probability distributions in python used by Loom. NOTE: this 
 
 Other upstream python packages required by Distributions and/or Loom.
 
+#### `.#loom.ociImg`
+
+A Loom container image is also provided as a passthru attribute of `loom`. It can be built and loaded into your local Docker registry with the following command:
+```sh
+docker load -i $(nix build 'github:OpenGen/nix/loom-oci-img-attribute#loom.ociImg' --no-link --print-out-paths)
+```
