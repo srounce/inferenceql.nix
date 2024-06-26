@@ -9,18 +9,19 @@
 , zip
 
 , autoPatchelfHook
-, breakpointHook
 , libtensorflow-bin
 , libusb
-, cudaPackages
+, cudaPackages_11
 
 , libGL
 , libglvnd
 , libdrm
 , expat
 , xorg
-, libllvm
+, mesa
 , llvmPackages_10
+, buildEnv
+, runCommand
 }:
 let
   inherit (python3Packages)
@@ -36,6 +37,19 @@ let
   scipy
   tqdm
   ;
+
+  libllvm-wrapped = 
+  let
+    libllvm = llvmPackages_10.libllvm.lib;
+    name = libllvm.name;
+  in
+  buildEnv {
+    inherit name;
+    paths = [
+      llvmPackages_10.libllvm.lib
+      (runCommand "${name}.1" {} "mkdir -p $out/lib && ln -sf ${libllvm}/lib/libLLVM-10.so $out/lib/libLLVM-10.so.1")
+    ];
+  };
 
   #addict = buildPythonPackage {
     #pname = "addict";
@@ -82,7 +96,6 @@ in buildPythonPackage {
 
   nativeBuildInputs = [
     autoPatchelfHook
-    breakpointHook
   ];
 
   buildInputs = [
@@ -91,14 +104,16 @@ in buildPythonPackage {
     libusb.out
     pytorchWithCuda
     libtensorflow-bin
-    cudaPackages.cudatoolkit.lib
+    cudaPackages_11.cudatoolkit.lib
+    #cudaPackages_11.cuda_cudart.lib
     libGL
     libglvnd
     libdrm
     expat
     xorg.libXxf86vm
     xorg.libXfixes
-    libllvm
+    libllvm-wrapped
+    mesa
   ];
 
   propagatedBuildInputs = [

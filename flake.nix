@@ -3,7 +3,16 @@
 
   inputs = {
     flake-parts.url = "github:hercules-ci/flake-parts";
+    flake-parts.inputs.nixpkgs-lib.follows = "nixpkgs";
+
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    nixpkgs-llvm-10.url = "github:NixOS/nixpkgs?rev=222c1940fafeda4dea161858ffe6ebfc853d3db5";
+
+    genjax.url = "github:probcomp/genjax?ref=v0.1.1";
+    genjax.flake = false;
+
+    poetry2nix.url = "github:nix-community/poetry2nix";
+    poetry2nix.inputs.nixpkgs.follows = "nixpkgs";
   };
 
   nixConfig.extra-substituters = [ "https://numtide.cachix.org" ];
@@ -35,7 +44,7 @@
         };
 
         scopes = (self.lib.mkScopes {
-          inherit pkgs internalPackages;
+          inherit pkgs internalPackages inputs;
           basicTools = self.lib.basicTools;
         });
         loom = scopes.callPy3Package ./pkgs/loom { };
@@ -50,6 +59,12 @@
           parsable = scopes.callPackage ./pkgs/parsable { };
           pymetis = scopes.callPackage ./pkgs/pymetis { };
           distributions = scopes.callPackage ./pkgs/distributions { };
+          genjax = scopes.callPy3Package ./pkgs/genjax { };
+          distinctipy = scopes.callPy3Package ./pkgs/distinctipy { };
+          pyransac3d = scopes.callPy3Package ./pkgs/pyransac3d { };
+          opencv-python = scopes.callPy3Package ./pkgs/opencv-python { };
+          oryx = scopes.callPy3Package ./pkgs/oryx { };
+          plum-dispatch = scopes.callPy3Package ./pkgs/plum-dispatch { };
         } // packages;
 
         packages = {
@@ -68,8 +83,13 @@
           inherit system;
           config = {
             allowUnfree = true;
-            #cudaSupport = true;
+            cudaSupport = true;
           };
+          overlays = [
+            (final: prev: {
+              inherit (inputs.nixpkgs-llvm-10.legacyPackages.${system}) llvmPackages_10;
+            })
+          ];
         };
 
         inherit packages;

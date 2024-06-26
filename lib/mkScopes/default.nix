@@ -1,9 +1,16 @@
-{ pkgs, basicTools, internalPackages }:
+{ pkgs, basicTools, internalPackages, inputs }:
 let
+  poetry2nix = inputs.poetry2nix.lib.mkPoetry2Nix { inherit pkgs; };
+
   callPackage = pkgs.newScope (
     pkgs
     // {
-      inherit callPackage callPy3Package;
+      inherit
+        callPackage
+        callPy3Package
+        inputs
+        poetry2nix
+        ;
       basicTools = basicTools pkgs;
     }
     // internalPackages
@@ -13,7 +20,12 @@ let
     pkgs
     // pkgs.python3Packages
     // {
-      inherit callPackage callPy3Package;
+      inherit
+        callPackage
+        callPy3Package
+        inputs
+        poetry2nix
+        ;
       basicTools = basicTools pkgs;
     }
     // internalPackages

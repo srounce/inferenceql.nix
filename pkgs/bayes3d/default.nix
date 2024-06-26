@@ -1,17 +1,42 @@
-{ pkgs
+{ lib
 , fetchFromGitHub
+, breakpointHook
 , python3Packages
 , cudaPackages
 , which
 , libglvnd
 , libGLU
 , open3d
+, symlinkJoin
+, genjax
+, distinctipy
+, pyransac3d
+, opencv-python
 }:
 let
-  rev = "ba4234a4720512f7dc45d11b8b8fbf449a439c0a";
+  rev = "21fc1ec8439b11eecc308610b23df45e7eee5ee0";
 
   #torch-cuda = python3Packages.torch.override (final: prev: {
   #});
+  
+  cuda-common-redist = with cudaPackages; [
+    cuda_cccl # <thrust/*>
+    libcublas # cublas_v2.h
+    libcurand
+    libcusolver # cusolverDn.h
+    libcusparse # cusparse.h
+  ];
+
+  cuda-native-redist = symlinkJoin {
+    name = "cuda-native-redist-${cudaPackages.cudaVersion}";
+    paths =
+      with cudaPackages;
+      [
+        cuda_cudart # cuda_runtime.h cuda_runtime_api.h
+        cuda_nvcc
+      ]
+      ++ cuda-common-redist;
+  };
 in
 python3Packages.buildPythonPackage rec {
   pname   = "bayes3d";
@@ -21,7 +46,7 @@ python3Packages.buildPythonPackage rec {
     repo = pname;
     owner = "probcomp";
     inherit rev;
-    hash = "sha256-/Cdm4Syfhm8QFCgKWITvaSGKmDjR38mepQez4xOzH1A=";
+    hash = "sha256-8HUtf9AGgsMSSarFpRhDSzen6Mt1TJNkAhm6T3o/fO0=";
   };
 
   pyproject = true;
@@ -30,6 +55,7 @@ python3Packages.buildPythonPackage rec {
     setuptools
     setuptools-scm
     which
+    #breakpointHook
   ];
 
   buildInputs = [
@@ -46,22 +72,26 @@ python3Packages.buildPythonPackage rec {
   propagatedBuildInputs = [
     python3Packages.torch
     python3Packages.graphviz
-    #python3Packages.genjax # TODO: missing
-    #python3Packages.distinctipy # TODO: missing
     python3Packages.imageio
     python3Packages.matplotlib
     python3Packages.meshcat
     python3Packages.natsort
-    open3d
-    #python3Packages.opencv-python # TODO: missing
     python3Packages.opencv4
     python3Packages.plyfile
     python3Packages.liblzfse
-    #python3Packages.pyransac3d # TODO: missing
     python3Packages.tensorflow-probability
     python3Packages.timm
     python3Packages.trimesh
-  ];
 
-  env.CUDA_HOME = "${cudaPackages.cuda_nvcc}";
+    distinctipy
+    open3d
+    opencv-python
+    pyransac3d
+  ] ++ genjax.poetryPackages;
+
+  preBuild = ''
+    export CUDA_HOME=${cuda-native-redist}
+  '';
+
+  #preferLocalBuild = true;
 }
