@@ -1,7 +1,5 @@
-{ pkgs, basicTools, internalPackages, inputs }:
+{ pkgs, basicTools, internalPackages, poetry2nix, inputs }:
 let
-  poetry2nix = inputs.poetry2nix.lib.mkPoetry2Nix { inherit pkgs; };
-
   callPackage = pkgs.newScope (
     pkgs
     // {

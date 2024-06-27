@@ -42,9 +42,11 @@
           inherit nixpkgs;
           basicTools = self.lib.basicTools;
         };
+        
+        poetry2nix = inputs.poetry2nix.lib.mkPoetry2Nix { inherit pkgs; };
 
         scopes = (self.lib.mkScopes {
-          inherit pkgs internalPackages inputs;
+          inherit pkgs internalPackages inputs poetry2nix;
           basicTools = self.lib.basicTools;
         });
         loom = scopes.callPy3Package ./pkgs/loom { };
@@ -78,6 +80,7 @@
             open3d
             ;
         };
+
       in {
         _module.args.pkgs = import inputs.nixpkgs {
           inherit system;
@@ -93,6 +96,8 @@
         };
 
         inherit packages;
+        
+        legacyPackages.internalPackages = internalPackages;
       };
 
       # NOTE: this property is consumed by flake-parts.mkFlake to define fields

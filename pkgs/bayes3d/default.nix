@@ -87,7 +87,8 @@ python3Packages.buildPythonPackage rec {
     open3d
     opencv-python
     pyransac3d
-  ] ++ genjax.poetryPackages;
+    genjax
+  ];
 
   preBuild = ''
     export CUDA_HOME=${cuda-native-redist}
