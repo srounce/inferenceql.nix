@@ -2,10 +2,13 @@
 , inputs
 , poetry2nix
 , python311
+, fetchPypi
 , stdenv
 , pkgs
 , oryx
 , plum-dispatch
+, jax
+, jaxtyping
 }:
 let
   src = stdenv.mkDerivation {
@@ -23,45 +26,66 @@ let
       cp -rfv ./. $out
     '';
   };
+
+  #jax = python311.pkgs.buildPythonPackage rec {
+    #pname = "jax";
+    #version = "0.4.28";
+
+    #src = fetchPypi {
+      #inherit pname version;
+      #hash = "sha256-3PCkSv8uFxPworNpKBzVt52MGPwQGJBcQSWJfLBrN+k=";
+    #};
+
+    #nativeBuildInputs = [
+      
+    #];
+
+    #propagatedBuildInputs = with python311.pkgs; [
+      #pip
+      #scipy
+      #opt-einsum
+      #ml-dtypes
+      #jaxlib
+    #];
+  #};
+
+  #jaxlib = python311.pkgs.buildPythonPackage {
+    #pname = "";
+    #version = "";
+
+    #src = fetchPypi {
+
+    #};
+  #};
 in
-poetry2nix.mkPoetryApplication {
-  projectDir = src.out;
+python311.pkgs.buildPythonPackage {
+  __noChroot = true;
 
-  overrides = poetry2nix.overrides.withDefaults (final: prev: {
-    #dm-tree = python311.pkgs.dm-tree;
-    #ruff = python311.pkgs.python-lsp-ruff;
-  });
+  pname = "genjax";
+  version = "0.1.1";
+  inherit src;
+  format = "pyproject";
 
-  preferWheels = true;
-
-  python = python311;
-}
-#python311.pkgs.buildPythonPackage {
-  #pname = "genjax";
-  #version = "0.1.1";
-  #inherit src;
-  #format = "pyproject";
-
-  #nativeBuildInputs = [
+  nativeBuildInputs = [
     #pkgs.poetry
     #python311.pkgs.poetry-core
-    #python311.pkgs.poetry-dynamic-versioning
-  #];
+    python311.pkgs.poetry-dynamic-versioning
+  ];
 
-  #propagatedBuildInputs = with python311.pkgs; [
-    #beartype
-    #deprecated
-    #dill
-    #equinox
-    #jax
-    #jaxtyping
-    #numpy
-    #optax
-    #oryx
-    #plum-dispatch
-    #pygments
-    #rich
-    #tensorflow-probability
-    #typing-extensions
-  #];
-#}
+  propagatedBuildInputs = [  ] ++ (with python311.pkgs; [
+    beartype
+    deprecated
+    dill
+    jax
+    jaxtyping
+    equinox
+    numpy
+    optax
+    oryx
+    plum-dispatch
+    pygments
+    rich
+    tensorflow-probability
+    typing-extensions
+  ]);
+}

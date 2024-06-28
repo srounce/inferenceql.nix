@@ -79,7 +79,8 @@ in buildPythonPackage {
     #dist = "py3";
     #sha256 = "";
   #};
-  
+
+  # TODO: make this multiplatform
   src = fetchurl {
     url = "https://files.pythonhosted.org/packages/5c/ba/a4c5986951344f804b5cbd86f0a87d9ea5969e8d13f1e8913e2d8276e0d8/open3d-0.18.0-cp311-cp311-manylinux_2_27_x86_64.whl";
     hash = "sha256-jj0dGQCo9NlW9oGcJGx4CBclubCIj4VJ0qeknI2qEwM=";

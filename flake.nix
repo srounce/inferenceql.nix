@@ -17,6 +17,7 @@
 
   nixConfig.extra-substituters = [ "https://numtide.cachix.org" ];
   nixConfig.extra-trusted-public-keys = [ "numtide.cachix.org-1:2ps1kLBUWjxIneOy1Ik6cQjb41X0iXVXeHigGmycPPE=" ];
+  nixConfig.sandbox = "relaxed";
 
   outputs = inputs@{ self, nixpkgs, flake-parts, ... }:
     flake-parts.lib.mkFlake { inherit inputs; } {
@@ -55,6 +56,9 @@
         open3d = scopes.callPackage ./pkgs/open3d { };
 
         internalPackages = {
+          #jaxlib = scopes.callPy3Package ./pkgs/jaxlib { };
+          #jax = scopes.callPy3Package ./pkgs/jax { };
+          jaxtyping = scopes.callPy3Package ./pkgs/jaxtyping { };
           tinygltf = scopes.callPackage ./pkgs/tinygltf { };
           PoissonRecon = scopes.callPackage ./pkgs/PoissonRecon { };
           goftests = scopes.callPackage ./pkgs/goftests { };
