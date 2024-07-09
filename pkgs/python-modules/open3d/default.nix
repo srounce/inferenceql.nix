@@ -1,7 +1,6 @@
 { stdenv
 , lib
 , pkgs
-, python3Packages
 , fetchPypi
 , fetchurl
 
@@ -10,9 +9,21 @@
 , zip
 
 , autoPatchelfHook
+, python
 , tensorflow-bin
 , libusb
 , cudaPackages_11
+, buildPythonPackage
+, ipywidgets
+, matplotlib
+, numpy
+, pandas
+, plyfile
+, pytorchWithCuda
+, pyyaml
+, scikitlearn
+, scipy
+, tqdm
 
 , libGL
 , libglvnd
@@ -24,20 +35,6 @@
 , runCommand
 }:
 let
-  inherit (python3Packages)
-    buildPythonPackage
-    ipywidgets
-    matplotlib
-    numpy
-    pandas
-    plyfile
-    pytorchWithCuda
-    pyyaml
-    scikitlearn
-    scipy
-    tqdm
-  ;
-
   libllvm-wrapped = 
   let
     libllvm = llvmPackages_10.libllvm.lib;
@@ -141,7 +138,7 @@ let
     };
   };
 
-  pyVersion = lib.versions.majorMinor python3Packages.python.version;
+  pyVersion = lib.versions.majorMinor python.version;
   srcInputs = prebuiltSrcs."${pyVersion}-${stdenv.system}" or (throw "open3d-bin for Python version '${pyVersion}' is not supported on '${stdenv.system}'");
 
   src = fetchPypi rec {

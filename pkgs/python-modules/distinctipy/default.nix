@@ -1,5 +1,4 @@
 { fetchPypi
-, python3Packages
 , buildPythonPackage
 , setuptools
 , numpy

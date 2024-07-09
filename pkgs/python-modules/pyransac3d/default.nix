@@ -1,6 +1,9 @@
 { fetchFromGitHub
 , python3
 , buildPythonPackage
+, setuptools
+, wheel
+, numpy
 }:
 # TODO: upstream me
 buildPythonPackage rec {
@@ -16,11 +19,11 @@ buildPythonPackage rec {
   };
 
   nativeBuildInputs = [
-    python3.pkgs.setuptools
-    python3.pkgs.wheel
+    setuptools
+    wheel
   ];
 
-  propagatedBuildInputs = with python3.pkgs; [
+  propagatedBuildInputs = [
     numpy
   ];
 

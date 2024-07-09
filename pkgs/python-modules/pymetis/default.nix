@@ -1,7 +1,8 @@
 { fetchPypi
-, python3Packages
+, buildPythonPackage
+, pybind11
 }:
-python3Packages.buildPythonPackage rec {
+buildPythonPackage rec {
   pname = "PyMetis";
   version = "2023.1.1";
   format = "setuptools";
@@ -14,6 +15,6 @@ python3Packages.buildPythonPackage rec {
   doCheck = false;
 
   nativeBuildInputs = [
-    python3Packages.pybind11
+    pybind11
   ];
 }

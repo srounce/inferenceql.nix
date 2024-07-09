@@ -78,16 +78,16 @@
     },
     "nixpkgs": {
       "locked": {
-        "dirtyRev": "a128565b55085166b20cfbb0a6bcaa736d96630e-dirty",
-        "dirtyShortRev": "a128565b5508-dirty",
-        "lastModified": 1719819879,
-        "narHash": "sha256-z0jXs3LtmEoPT0KkqKmnteIXuE4/wBYFwdWVCiag96U=",
-        "type": "git",
-        "url": "file:///home/s/repos/nixpkgs"
+        "lastModified": 1720028458,
+        "narHash": "sha256-DuQi7Eaa7hfpl5WufMiWDq/a4p5qngRtwhXNGHmdv4Y=",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "d8724afca4565614164dd81345f6137c4c6eab21",
+        "type": "github"
       },
       "original": {
-        "owner": "zimbatm",
-        "ref": "jax-fixes",
+        "owner": "NixOS",
+        "ref": "d8724afca4565614164dd81345f6137c4c6eab21",
         "repo": "nixpkgs",
         "type": "github"
       }
