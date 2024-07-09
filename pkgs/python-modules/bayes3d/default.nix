@@ -29,7 +29,7 @@
 , trimesh
 }:
 let
-  rev = "eb942aeca9441957c5cc62da26dde3e2c70c23c2";
+  rev = "8113f643a7ba084e0ca2288cf06f95a23e39d1c7";
 
    cuda-common-redist = with cudaPackages_11; [
      cuda_cccl # <thrust/*>
@@ -56,9 +56,9 @@ buildPythonPackage rec {
 
   src = fetchFromGitHub {
     repo = pname;
-    owner = "probcomp";
+    owner = "srounce";
     inherit rev;
-    hash = "sha256-jtiLyBu3G+B4Qx1iBq7gVlzb4sdaaB25Gyk+fxcgKxU=";
+    hash = "sha256-6AtxR8ZsByliDTQE/hEJs5+LKwdfS/sRGYXf+mgFHxw=";
   };
 
   pyproject = true;

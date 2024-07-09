@@ -52,8 +52,9 @@
         });
         loom = scopes.callPy3Package ./pkgs/loom { };
 
-        bayes3d = scopes.callPackage ./pkgs/bayes3d { };
-        open3d = scopes.callPackage ./pkgs/open3d { };
+        # TODO: make this cleaner
+        bayes3d = self'.legacyPackages.python3Packages.bayes3d;
+        open3d = scopes.callPy3Package ./pkgs/python-modules/open3d { };
 
         internalPackages = {
           #jaxlib = scopes.callPy3Package ./pkgs/jaxlib { };
@@ -132,11 +133,33 @@
 
         inherit packages;
 
-        legacyPackages.internalPackages = internalPackages;
         legacyPackages.python3Packages = 
         (pkgs.python3Packages.overrideScope pythonOverrides).overrideScope (super: superPython:
           loadPackages super.callPackage ./pkgs/python-modules
         );
+
+        devShells.default = pkgs.mkShell {
+          packages = with pkgs; [
+            self'.legacyPackages.python3Packages.python-lsp-server
+            (python3.withPackages (ps: with self'.legacyPackages.python3Packages; [
+              jupyter
+              bayes3d
+              jax
+              scipy
+              pyransac3d
+            ]))
+          ];
+
+          shellHook = ''
+            export EXTRA_LDFLAGS="-L/lib -L${pkgs.linuxPackages.nvidia_x11}/lib"
+            export EXTRA_CCFLAGS="-I/usr/include"
+            export CUDA_PATH=${pkgs.cudatoolkit_11}
+            export B3D_ASSETS_PATH="${bayes3d.src}/assets"
+
+            jupyter notebook
+            exit
+          '';
+        };
       };
 
       # NOTE: this property is consumed by flake-parts.mkFlake to define fields

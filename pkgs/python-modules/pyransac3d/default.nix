@@ -1,9 +1,9 @@
 { fetchFromGitHub
 , python3
-, buildPythonApplication
+, buildPythonPackage
 }:
 # TODO: upstream me
-buildPythonApplication rec {
+buildPythonPackage rec {
   pname = "pyransac3d";
   version = "0.6.0";
   pyproject = true;
