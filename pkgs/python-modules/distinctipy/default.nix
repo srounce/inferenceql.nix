@@ -1,7 +1,10 @@
 { fetchPypi
 , python3Packages
+, buildPythonPackage
+, setuptools
+, numpy
 }:
-python3Packages.buildPythonPackage rec {
+buildPythonPackage rec {
   pname = "distinctipy";
   version = "1.3.4";
   format = "pyproject";
@@ -14,10 +17,10 @@ python3Packages.buildPythonPackage rec {
   doCheck = false;
 
   nativeBuildInputs = [
-    python3Packages.setuptools
+    setuptools
   ];
 
-  propagatedBuildInputs = with python3Packages; [
+  propagatedBuildInputs = [
     numpy
   ];
 }

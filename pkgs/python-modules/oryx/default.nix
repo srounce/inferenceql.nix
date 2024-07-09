@@ -3,7 +3,7 @@
 , fetchPypi
 , poetry-core
 , jax
-, jaxlib
+, jaxlib-bin
 , tensorflow-probability
 }:
 
@@ -23,7 +23,7 @@ buildPythonPackage rec {
 
   propagatedBuildInputs = [
     jax
-    jaxlib
+    jaxlib-bin
     tensorflow-probability
   ];
 

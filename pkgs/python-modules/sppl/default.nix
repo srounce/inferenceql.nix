@@ -2,6 +2,7 @@
   system,
   ...
 }: let
+  # FIXME: check if we still need python 3.9. Can it be switched to 3.11?
 
   # relies on specific versions of deps that are no longer present in
   # nixpkgs stable; we must checkout a specific SHA

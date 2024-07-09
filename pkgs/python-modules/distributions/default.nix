@@ -20,7 +20,8 @@ let
 
   distributions-shared = callPackage ./distributions-shared.nix { inherit version src; };
 
-  imageio = python3Packages.buildPythonPackage rec {
+  # TODO: move into own package
+  imageio_2_6_1 = python3Packages.buildPythonPackage rec {
     pname = "imageio";
     version = "2.6.1";
 
@@ -75,7 +76,7 @@ python3Packages.buildPythonPackage {
   # TODO: be more precise. Some tests seem to be still in Python 2.
   doCheck = false;
   nativeCheckInputs = with python3Packages; [
-    imageio
+    imageio_2_6_1
     nose
     goftests
     pytest

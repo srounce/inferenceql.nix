@@ -5,7 +5,7 @@
     flake-parts.url = "github:hercules-ci/flake-parts";
     flake-parts.inputs.nixpkgs-lib.follows = "nixpkgs";
 
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    nixpkgs.url = "github:zimbatm/nixpkgs?ref=jax-fixes";
     nixpkgs-llvm-10.url = "github:NixOS/nixpkgs?rev=222c1940fafeda4dea161858ffe6ebfc853d3db5";
 
     genjax.url = "github:probcomp/genjax?ref=v0.1.1";
@@ -85,23 +85,58 @@
             ;
         };
 
+        loadPackages = callPackage: path:
+          let
+            entries = builtins.readDir path;
+          in
+            pkgs.lib.mapAttrs (name: type: 
+            if type != "directory" then (throw "${toString path}/${name} is not a directory")
+            else
+              callPackage "${toString path}/${name}" { }
+            )
+            entries;
+
+        # For fixing existing packages that live in nixpkgs
+        # TODO: put in separate file
+        pythonOverrides = super: pythonSuper: {
+          # so we can pull from flake inputs
+          inherit inputs;
+
+          # FIXME: I don't think this is working as expected. Better to change nixpkgs wthfor now.
+
+          # Use the pre-built version of tensorflow
+          tensorflow = pythonSuper.tensorflow-bin;
+
+          # Use the pre-built version of jaxlib
+          jaxlib = super.jaxlib-bin;
+
+          # Use the pre-built version of libjax
+          libjax = super.libjax-bin;
+        };
       in {
         _module.args.pkgs = import inputs.nixpkgs {
           inherit system;
           config = {
+            # FIXME: commenting these out to see if they fix the duplicate dependency issue when building bayes3d
             allowUnfree = true;
-            cudaSupport = true;
+            # Only enable CUDA on Linux
+            cudaSupport = (system == "x86_64-linux" || system == "aarch64-linux");
           };
           overlays = [
             (final: prev: {
+              # FIXME: say why this was added.
               inherit (inputs.nixpkgs-llvm-10.legacyPackages.${system}) llvmPackages_10;
             })
           ];
         };
 
         inherit packages;
-        
+
         legacyPackages.internalPackages = internalPackages;
+        legacyPackages.python3Packages = 
+        (pkgs.python3Packages.overrideScope pythonOverrides).overrideScope (super: superPython:
+          loadPackages super.callPackage ./pkgs/python-modules
+        );
       };
 
       # NOTE: this property is consumed by flake-parts.mkFlake to define fields

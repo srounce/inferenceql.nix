@@ -1,7 +1,9 @@
 { fetchFromGitHub
 , python3
+, buildPythonApplication
 }:
-python3.pkgs.buildPythonApplication rec {
+# TODO: upstream me
+buildPythonApplication rec {
   pname = "pyransac3d";
   version = "0.6.0";
   pyproject = true;

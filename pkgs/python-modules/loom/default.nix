@@ -27,8 +27,8 @@
 , zlib
 , eigen
 , gperftools
-, dockerTools
-, basicTools
+# , dockerTools
+# , basicTools
 , distributions
 , goftests
 , parsable
@@ -191,13 +191,14 @@ let
       ;
     };
 
-    passthru.ociImg = dockerTools.buildLayeredImage {
-      name = "probcomp/loom";
-      contents =
-        with pkgs; [ loom bashInteractive ] ++
-        basicTools
-      ;
-    };
+    # TODO: move it to a different package
+    # passthru.ociImg = dockerTools.buildLayeredImage {
+    #   name = "probcomp/loom";
+    #   contents =
+    #     with pkgs; [ loom bashInteractive ] ++
+    #     basicTools
+    #   ;
+    # };
 
     passthru.tests.run = callPackage ./test.nix { inherit src; };
 
