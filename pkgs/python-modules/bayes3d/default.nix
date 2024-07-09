@@ -108,4 +108,8 @@ buildPythonPackage rec {
    '';
 
   #preferLocalBuild = true;
+
+  pythonImportsCheck = [
+    "bayes3d"
+  ];
 }
